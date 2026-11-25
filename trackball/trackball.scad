@@ -27,7 +27,7 @@ h_bola = 0.75;       // holgura radial de la cavidad
 bc     = [0, 13, 27];    // centro de la bola
 bol_d  = 3;          // bolitas de apoyo (cerámica Si3N4 o acero), 3 unidades
 bol_a  = 50;         // ángulo de los apoyos medido desde la vertical de abajo
-bol_az = 90;         // giro del primer apoyo (90 = hacia atrás, los otros dos delante a los lados)
+bol_az = -90;        // giro del primer apoyo (-90 = hacia delante, los otros dos detrás a los lados)
 borde  = 3;          // cuánto sube el borde de la carcasa por encima del centro de la bola
 
 // ---------- Sensor (SUPUESTOS: medir la placa que compres y corregir) ----------
@@ -49,7 +49,7 @@ cm_p   = 3;          // fondo de la cola de milano
 cm_w   = [8, 11];    // ancho de la cola de milano: en la raíz y en la punta
 sop_z  = [0.5, 15];  // alto del soporte (por encima de 12,9 sigue la cabeza de la garra)
 sop_w  = 16;         // ancho del soporte (el de la espina)
-tope   = 1.5;        // la ranura de la carcasa no llega abajo: el raíl apoya aquí
+tope   = 1.5;        // techo de la ranura: la carcasa baja por el raíl hasta apoyar en su punta
 v_ref  = [40, 0.9];  // borde de abajo de la cara interior de cada mitad: |x| = 40 - 0,9 y (de ref_forge.scad)
 v_h    = 1.5;        // la carcasa se queda al menos a esta distancia de ese borde
 
@@ -71,7 +71,7 @@ module soporte() {
       // cuña: detrás sigue la cara inclinada de la garra, delante es vertical
       rotate([90, 0, 90]) linear_extrude(sop_w, center = true)
         polygon([[y_raiz, sop_z[0]], [yga(sop_z[0]) - g_gar, sop_z[0]], [yga(z_g0 - 4) - g_gar, z_g0 - 4], [yga(sop_z[1]) - g_gar, sop_z[1]], [y_raiz, sop_z[1]]]);
-      translate([0, 0, sop_z[0] + tope]) linear_extrude(sop_z[1] - sop_z[0] - tope) cola2d();
+      translate([0, 0, sop_z[0]]) linear_extrude(sop_z[1] - sop_z[0]) cola2d();
     }
     for (z = ac_z) translate([0, 0, z]) rotate([-90, 0, 0]) {
       translate([0, 0, y_raiz - cm_p - 1]) cylinder(d = 3.4, h = 30);                              // paso del M3
@@ -112,8 +112,8 @@ module carcasa() {
     translate([0, 0, cas_z0 - 0.01]) linear_extrude(tapa_t + 0.01) tapa2d(g);                     // asiento de la tapa
     // salida del cable del sensor, por delante y por abajo
     translate([bc[0] - 4, bc[1] - cas_d/2 - 1, cas_z0 - 0.01]) cube([8, cas_d/2, 3.5]);
-    // ranura de la cola de milano: abierta arriba, cerrada abajo por el tope
-    translate([0, 0, sop_z[0] + tope - g]) linear_extrude(50) cola2d(g);
+    // ranura de la cola de milano: abierta abajo, cerrada arriba; la carcasa baja desde arriba y apoya en el raíl
+    translate([0, 0, cas_z0 - 1]) linear_extrude(sop_z[1] + g - cas_z0 + 1) cola2d(g);
     // tornillo de la tapa (M2 rosca en plástico), dos a los lados
     for (s = [-1, 1]) translate([bc[0] + s * tor_x, bc[1], cas_z0 - 0.01]) cylinder(d = 1.7, h = 8);
   }
