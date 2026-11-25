@@ -1,0 +1,5 @@
+# paquetes y resultados que se regeneran
+*.zip
+*.npz
+__pycache__/
+*.pyc

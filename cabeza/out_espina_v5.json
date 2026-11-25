@@ -1,0 +1,73 @@
+{
+ "peso x3 (sacudidas)": {
+  "apoyos_N": {
+   "apoyo trasero der": 27.5,
+   "apoyo trasero izq": 35.8,
+   "tornillo (tira hacia abajo)": -50.1
+  },
+  "vueltas": 5,
+  "roce_ancho_N": 0.0,
+  "roce_largo_N": 120.0,
+  "flecha_borde_pantalla_mm": 1.584,
+  "vm_p99": 7.09,
+  "vm_max": 9.83
+ },
+ "empujar arriba, 15 N": {
+  "apoyos_N": {
+   "apoyo trasero der": 42.3,
+   "apoyo trasero izq": 50.7,
+   "tornillo (tira hacia abajo)": -79.0
+  },
+  "vueltas": 5,
+  "roce_ancho_N": 0.0,
+  "roce_largo_N": 108.5,
+  "flecha_borde_pantalla_mm": 2.467,
+  "vm_p99": 8.74,
+  "vm_max": 12.44
+ },
+ "tirar de arriba, 15 N": {
+  "apoyos_N": {
+   "apoyo delantero der": 0.3,
+   "apoyo trasero der": 14.8,
+   "apoyo trasero izq": 10.9,
+   "banda atrás der": -17.7,
+   "banda atrás izq": -12.2,
+   "tornillo (tira hacia abajo)": -1.3
+  },
+  "vueltas": 2,
+  "roce_ancho_N": -0.0,
+  "roce_largo_N": 131.5,
+  "flecha_borde_pantalla_mm": 0.063,
+  "vm_p99": 4.79,
+  "vm_max": 6.81
+ },
+ "golpe lateral, 12 N": {
+  "apoyos_N": {
+   "apoyo trasero der": 104.4,
+   "banda atrás izq": -52.8,
+   "tornillo (tira hacia abajo)": -47.1
+  },
+  "vueltas": 5,
+  "roce_ancho_N": -12.0,
+  "roce_largo_N": 120.0,
+  "flecha_borde_pantalla_mm": 2.448,
+  "vm_p99": 8.41,
+  "vm_max": 15.41
+ },
+ "apoyarse encima, 30 N": {
+  "apoyos_N": {
+   "apoyo trasero der": 57.1,
+   "apoyo trasero izq": 66.5,
+   "tornillo (tira hacia abajo)": -89.2
+  },
+  "vueltas": 5,
+  "roce_ancho_N": 0.0,
+  "roce_largo_N": 120.0,
+  "flecha_borde_pantalla_mm": 2.78,
+  "vm_p99": 9.51,
+  "vm_max": 13.5
+ },
+ "_peor": "golpe lateral, 12 N",
+ "_celdas": 42276,
+ "_h": 0.7
+}
