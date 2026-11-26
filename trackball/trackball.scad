@@ -40,6 +40,13 @@ lente   = [12, 20];  // SUPUESTO: hueco para la lente LM19-LSI, x por y (el larg
 cas_d  = 40;         // diámetro exterior de la carcasa
 cas_z0 = 0.5;        // la carcasa queda 0,5 mm por encima de la cara de abajo del teclado (las patas levantan 1)
 tapa_t = 1.6;        // grosor de la tapa
+
+// ---------- Clics: dos pulsadores 6x6 de 2 patas en los flancos (izquierdo y derecho) ----------
+pu_cuerpo = [6.2, 3.6];  // hueco del cuerpo: lado y fondo (el pulsador asoma 1,5-2 mm de la carcasa)
+pu_z   = 20;         // altura del centro del pulsador
+pu_dy  = -5;         // desplazamiento del pulsador respecto al centro de la bola, a lo largo de y
+pu_x0  = 16;         // fondo del hueco (desde el eje de la bola)
+can    = [2.2, 3];   // canal de los cables: ancho en x y en y
 g      = 0.2;        // holgura entre piezas impresas
 g_gar  = 0.2;        // hueco entre el soporte y la garra
 asiento = 2.5;       // plástico bajo la cabeza del M3: con M3x8 la punta queda enrasada con la cara de atrás de la garra
@@ -114,6 +121,13 @@ module carcasa() {
     translate([bc[0] - 4, bc[1] - cas_d/2 - 1, cas_z0 - 0.01]) cube([8, cas_d/2, 3.5]);
     // ranura de la cola de milano: abierta abajo, cerrada arriba; la carcasa baja desde arriba y apoya en el raíl
     translate([0, 0, cas_z0 - 1]) linear_extrude(sop_z[1] + g - cas_z0 + 1) cola2d(g);
+    // pulsadores de los clics: hueco del cuerpo, paso de las patas y canal hasta la cámara del sensor
+    for (s = [-1, 1]) mirror([s < 0 ? 1 : 0, 0, 0]) translate([bc[0], bc[1] + pu_dy, 0]) {
+      translate([pu_x0, -pu_cuerpo[0]/2, pu_z - pu_cuerpo[0]/2]) cube([20, pu_cuerpo[0], pu_cuerpo[0]]);
+      translate([pcb[0]/2 + g + 0.2, -pu_cuerpo[0]/2 + 0.6, pu_z - 1]) cube([pu_x0 - pcb[0]/2 - g - 0.1, pu_cuerpo[0] - 1.2, 2]);
+      translate([pcb[0]/2 + g + 0.2, -can[1]/2, cas_z0 + tapa_t]) cube([can[0], can[1], pu_z - cas_z0 - tapa_t + 1]);
+      translate([pcb[0]/2 - 3, -can[1]/2, cas_z0 + tapa_t]) cube([can[0] + 3.4, can[1], z_pcb0 - cas_z0 - tapa_t - 0.3]);
+    }
     // tornillo de la tapa (M2 rosca en plástico), dos a los lados
     for (s = [-1, 1]) translate([bc[0] + s * tor_x, bc[1], cas_z0 - 0.01]) cylinder(d = 1.7, h = 8);
   }
@@ -135,6 +149,8 @@ module tapa() {
   }
 }
 
+module pulsadores_ref() { for (s = [-1, 1]) mirror([s < 0 ? 1 : 0, 0, 0]) translate([bc[0] + pu_x0, bc[1] + pu_dy, pu_z]) {
+                    color("#222") translate([0, -3, -3]) cube([3.5, 6, 6]); color("#111") translate([3.5, 0, 0]) rotate([0, 90, 0]) cylinder(d = 3.5, h = 2.5); } }
 module bola_ref() { color("#35e0d0") translate(bc) sphere(d = bola); color("#e6e6e6") translate(bc) bolitas() translate([0, 0, bola/2 + bol_d/2]) sphere(d = bol_d); }
 module pcb_ref()  { color("#1f7a55") translate([bc[0] - pcb[0]/2, bc[1] - pcb[1]/2, z_pcb0]) cube(pcb);
                     color("#111") translate([bc[0] - 5, bc[1] - 7, z_pcb0 - chip_h]) cube([10, 14, chip_h]);
@@ -144,4 +160,4 @@ if (pieza == "soporte") translate([0, 0, -sop_z[0]]) soporte();                 
 else if (pieza == "carcasa") carcasa();                                                            // tal cual, sobre su base
 else if (pieza == "tapa") translate([0, 0, -cas_z0]) tapa();
 else if (pieza == "piezas") { carcasa(); translate([45, 0, 0]) tapa(); translate([-40, 0, -sop_z[0]]) soporte(); }
-else { color("#f0761f") soporte(); color("#3a404b") carcasa(); color("#262a31") tapa(); bola_ref(); pcb_ref(); }
+else { color("#f0761f") soporte(); color("#3a404b") carcasa(); color("#262a31") tapa(); bola_ref(); pcb_ref(); pulsadores_ref(); }

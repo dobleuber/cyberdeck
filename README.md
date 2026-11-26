@@ -50,14 +50,17 @@ tiene en la cara que mira a las palmas. La bola queda entre las dos palancas de 
 | Archivo | Qué es | Peso (PETG, macizo) | Cómo se imprime |
 |---|---|---|---|
 | `trackball/soporte.stl` | Cuña que se atornilla a la garra y acaba en un raíl de cola de milano | 2 g | De pie sobre su base |
-| `trackball/carcasa.stl` | Aloja la bola, tres bolitas de apoyo y la placa del sensor; baja deslizando por el raíl | 27 g | Sobre su base |
+| `trackball/carcasa.stl` | Aloja la bola, tres bolitas de apoyo, la placa del sensor y los dos pulsadores de los clics; baja deslizando por el raíl | 27 g | Sobre su base |
 | `trackball/tapa.stl` | Cierra por debajo la cámara del sensor | 1 g | Plana |
 
 Montaje: primero el soporte, con 2 × M3×8 Allen (no más largos: la punta queda enrasada con la cara de la garra que
 toca el teclado). Luego la placa del sensor y la tapa (2 × M2×6 que roscan en el plástico), las tres bolitas de 5 mm
 (cerámica o acero) y la bola. La carcasa baja por el raíl desde arriba.
 
-El sensor va por cable a una placa RP2040 con QMK, que se presenta a la Orange Pi como un ratón USB normal.
+Los clics son dos pulsadores de 6 × 6 mm de dos patas, uno en cada flanco (izquierdo y derecho), metidos a presión en
+su hueco con una gota de pegamento; las patas bajan por un canal hasta la cámara del sensor. El módulo no depende del
+teclado: el sensor y los pulsadores van por un cable de 8 hilos a una Raspberry Pi Pico con QMK, que se presenta a la
+Orange Pi como un ratón USB normal.
 
 Sin comprobar todavía:
 
@@ -65,7 +68,7 @@ Sin comprobar todavía:
   `trackball/trackball.scad`) son supuestas: hay que corregirlas con la placa que se compre.
 - La holgura con las mitades del teclado sale del volumen de referencia (`ref_forge.scad`), que en el centro se
   tomó en parte de fotos: unos 0,6 mm en el peor punto, abajo y detrás.
-- Los clics: falta ver si el firmware del Master Forge puede mandar clics de ratón desde las palancas.
+- El fondo del hueco de los pulsadores depende del modelo exacto (`pu_cuerpo`): el pulsador debe asomar 1,5-2 mm.
 
 Para regenerar: `openscad -o trackball/carcasa.stl --export-format binstl -D 'pieza="carcasa"' trackball/trackball.scad`
 (también `soporte` y `tapa`; `pieza="conjunto"` lo muestra montado).
