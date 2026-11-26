@@ -54,7 +54,7 @@ tiene en la cara que mira a las palmas. La bola queda entre las dos palancas de 
 | `trackball/tapa.stl` | Cierra por debajo la cámara del sensor | 1 g | Plana |
 
 Montaje: primero el soporte, con 2 × M3×8 Allen (no más largos: la punta queda enrasada con la cara de la garra que
-toca el teclado). Luego la placa del sensor y la tapa (2 × M2×6 que roscan en el plástico), las tres bolitas de 3 mm
+toca el teclado). Luego la placa del sensor y la tapa (2 × M2×6 que roscan en el plástico), las tres bolitas de 5 mm
 (cerámica o acero) y la bola. La carcasa baja por el raíl desde arriba.
 
 El sensor va por cable a una placa RP2040 con QMK, que se presenta a la Orange Pi como un ratón USB normal.

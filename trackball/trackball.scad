@@ -3,7 +3,7 @@
 //  Dos piezas:
 //   - soporte: cuña que se atornilla a las dos roscas M3 de la cara de la garra de la espina (ac_z en espina.scad)
 //              y termina en un raíl de cola de milano vertical.
-//   - carcasa: aloja la bola (sobre tres bolitas de 3 mm) y la placa del sensor; baja deslizando sobre el raíl.
+//   - carcasa: aloja la bola (sobre tres bolitas de 5 mm) y la placa del sensor; baja deslizando sobre el raíl.
 //   - tapa:    cierra la cámara del sensor por debajo.
 //  Ejes y origen iguales que en espina.scad: x a lo ancho, y hacia atrás (0 = borde de las palmas), z hacia arriba
 //  (0 = cara de abajo del teclado).
@@ -25,7 +25,7 @@ function yga(z) = z <= z_g0 - 4 ? yp(z) - g_esp - ga_t                          
 bola   = 25;         // bola de trackball de 25 mm
 h_bola = 0.75;       // holgura radial de la cavidad
 bc     = [0, 13, 27];    // centro de la bola
-bol_d  = 3;          // bolitas de apoyo (cerámica Si3N4 o acero), 3 unidades
+bol_d  = 5;          // bolitas de apoyo (cerámica Si3N4 o acero), 3 unidades
 bol_a  = 50;         // ángulo de los apoyos medido desde la vertical de abajo
 bol_az = -90;        // giro del primer apoyo (-90 = hacia delante, los otros dos detrás a los lados)
 borde  = 3;          // cuánto sube el borde de la carcasa por encima del centro de la bola
@@ -102,7 +102,7 @@ module carcasa() {
     translate([bc[0], bc[1], z_top - 1]) cylinder(d1 = bola + 2 * h_bola, d2 = bola + 2 * h_bola + 3, h = 1.01);   // chaflán
     // alojamientos de las bolitas: entran desde la cavidad
     translate(bc) bolitas() translate([0, 0, bola/2 + bol_d/2 - 0.1]) {
-      cylinder(d = bol_d + 0.15, h = bol_d);
+      cylinder(d = bol_d + 0.15, h = bol_d / 2 + 0.4);   // fondo del alojamiento
       translate([0, 0, -bol_d]) cylinder(d = bol_d + 0.15, h = bol_d);
     }
     // ventana de la lente y cámara del sensor (abierta por abajo)
