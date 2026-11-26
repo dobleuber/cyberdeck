@@ -41,7 +41,16 @@ cas_d  = 40;         // diámetro exterior de la carcasa
 cas_z0 = 0.5;        // la carcasa queda 0,5 mm por encima de la cara de abajo del teclado (las patas levantan 1)
 tapa_t = 1.6;        // grosor de la tapa
 
-// ---------- Clics: dos pulsadores 6x6 de 2 patas en los flancos (izquierdo y derecho) ----------
+// ---------- Clics ----------
+clic   = "mx";       // mx: dos switches MX en la cara delantera | 6x6: dos pulsadores 6x6 en los flancos
+// Switches MX (Cherry o compatibles), uno al lado del otro, mirando hacia ti y hacia arriba
+mx_c   = [0, -12.5, 13];  // centro de la cara de la placa
+mx_t   = 40;         // inclinación de la placa desde la vertical (0 = mira de frente, 90 = mira arriba)
+mx_paso = 19.05;     // separación entre los dos switches (la de un teclado)
+mx_hue = 14;         // hueco cuadrado del switch (estándar MX)
+mx_pl  = 1.5;        // grosor de la placa alrededor del hueco (lo que piden las pestañas del switch)
+mx_cue = [15.4, 9];  // hueco de detrás para el cuerpo y las patas: lado y fondo
+// Pulsadores 6x6 de 2 patas en los flancos (izquierdo y derecho)
 pu_cuerpo = [6.2, 3.6];  // hueco del cuerpo: lado y fondo (el pulsador asoma 1,5-2 mm de la carcasa)
 pu_z   = 20;         // altura del centro del pulsador
 pu_dy  = -5;         // desplazamiento del pulsador respecto al centro de la bola, a lo largo de y
@@ -92,8 +101,29 @@ module bolitas(c = 0) {                 // centros de los apoyos, a bola/2 + bol
     children();
 }
 
+module en_placa() { translate(mx_c) rotate([-mx_t, 0, 0]) children(); }   // marco de la placa MX: cara en y=0, mira a -y
+module frente_mx() {         // bloque que sostiene los dos switches
+  hull() {
+    en_placa() translate([-mx_paso - 0.5, 0, -mx_paso/2 - 0.5]) cube([2 * mx_paso + 1, mx_pl, mx_paso + 1]);
+    translate([-mx_paso - 0.5, bc[1] - 14, cas_z0]) cube([2 * mx_paso + 1, 1, 1]);
+    translate([-mx_paso - 0.5, bc[1] - 14, cas_z0]) cube([2 * mx_paso + 1, 1, z_top - 6 - cas_z0]);
+  }
+}
+module huecos_mx() {
+  for (s = [-1, 1]) en_placa() translate([s * mx_paso / 2, 0, 0]) {
+    translate([-mx_hue/2, -1, -mx_hue/2]) cube([mx_hue, mx_pl + 1.01, mx_hue]);
+    translate([-mx_cue[0]/2, mx_pl, -mx_cue[0]/2]) cube([mx_cue[0], mx_cue[1], mx_cue[0]]);
+  }
+  // canal de los cables: de los huecos de los switches a la salida del cable, por debajo
+  hull() for (s = [-1, 1]) en_placa() translate([s * mx_paso / 2 - 2, mx_pl + mx_cue[1] - 3, -mx_cue[0]/2]) cube([4, 3, 4]);
+  hull() { en_placa() translate([-2, mx_pl + mx_cue[1] - 3, -mx_cue[0]/2]) cube([4, 3, 4]);
+           translate([bc[0] - 4, bc[1] - cas_d/2, cas_z0 - 0.01]) cube([8, 4, 3.5]); }
+}
+
 module carcasa() {
   difference() {
+    union() {
+    if (clic == "mx") frente_mx();
     intersection() {
       hull() {
         translate([bc[0], bc[1], cas_z0]) cylinder(d = cas_d, h = z_top - cas_z0);
@@ -102,6 +132,7 @@ module carcasa() {
       translate([-50, -50, 0]) cube([100, y_raiz - g + 50, 100]);                                 // plano trasero, pegado al soporte
       linear_extrude(100) polygon([[0, (v_ref[0] - v_h) / v_ref[1]], [60, (v_ref[0] - v_h - 60) / v_ref[1]],
                                    [60, -60], [-60, -60], [-60, (v_ref[0] - v_h - 60) / v_ref[1]]]);   // recorte en V
+    }
     }
     // cavidad de la bola y boca para sacarla
     translate(bc) sphere(d = bola + 2 * h_bola);
@@ -117,12 +148,13 @@ module carcasa() {
     translate([bc[0] - pcb[0]/2 - g, bc[1] - pcb[1]/2 - g, z_pcb0]) cube([pcb[0] + 2*g, pcb[1] + 2*g, pcb[2] + 0.01]);
     translate([bc[0] - pcb[0]/2 + 1.5, bc[1] - pcb[1]/2 + 1.5, cas_z0 - 0.01]) cube([pcb[0] - 3, pcb[1] - 3, z_pcb0 - cas_z0 + 0.02]);
     translate([0, 0, cas_z0 - 0.01]) linear_extrude(tapa_t + 0.01) tapa2d(g);                     // asiento de la tapa
-    // salida del cable del sensor, por delante y por abajo
-    translate([bc[0] - 4, bc[1] - cas_d/2 - 1, cas_z0 - 0.01]) cube([8, cas_d/2, 3.5]);
+    // salida del cable, por delante y por abajo (con los MX sale por debajo del frente)
+    translate([bc[0] - 4, bc[1] - cas_d/2 - (clic == "mx" ? 15 : 1), cas_z0 - 0.01]) cube([8, cas_d/2 + (clic == "mx" ? 14 : 0), 3.5]);
     // ranura de la cola de milano: abierta abajo, cerrada arriba; la carcasa baja desde arriba y apoya en el raíl
     translate([0, 0, cas_z0 - 1]) linear_extrude(sop_z[1] + g - cas_z0 + 1) cola2d(g);
+    if (clic == "mx") huecos_mx();
     // pulsadores de los clics: hueco del cuerpo, paso de las patas y canal hasta la cámara del sensor
-    for (s = [-1, 1]) mirror([s < 0 ? 1 : 0, 0, 0]) translate([bc[0], bc[1] + pu_dy, 0]) {
+    if (clic == "6x6") for (s = [-1, 1]) mirror([s < 0 ? 1 : 0, 0, 0]) translate([bc[0], bc[1] + pu_dy, 0]) {
       translate([pu_x0, -pu_cuerpo[0]/2, pu_z - pu_cuerpo[0]/2]) cube([20, pu_cuerpo[0], pu_cuerpo[0]]);
       translate([pcb[0]/2 + g + 0.2, -pu_cuerpo[0]/2 + 0.6, pu_z - 1]) cube([pu_x0 - pcb[0]/2 - g - 0.1, pu_cuerpo[0] - 1.2, 2]);
       translate([pcb[0]/2 + g + 0.2, -can[1]/2, cas_z0 + tapa_t]) cube([can[0], can[1], pu_z - cas_z0 - tapa_t + 1]);
@@ -149,6 +181,10 @@ module tapa() {
   }
 }
 
+module mx_ref() { for (s = [-1, 1]) en_placa() translate([s * mx_paso / 2, 0, 0]) {
+                    color("#e8e2d0") translate([-7, 0, -7]) cube([14, 5, 14]);                       // cuerpo, por detrás de la placa
+                    color("#e8e2d0") translate([-7.8, -6.6, -7.8]) cube([15.6, 6.6, 15.6]);          // tapa del switch
+                    color("#3a2a20") translate([-9, -6.6 - 3.6 - 7.5, -9]) cube([18, 7.5, 18]); } }   // keycap (de referencia)
 module pulsadores_ref() { for (s = [-1, 1]) mirror([s < 0 ? 1 : 0, 0, 0]) translate([bc[0] + pu_x0, bc[1] + pu_dy, pu_z]) {
                     color("#222") translate([0, -3, -3]) cube([3.5, 6, 6]); color("#111") translate([3.5, 0, 0]) rotate([0, 90, 0]) cylinder(d = 3.5, h = 2.5); } }
 module bola_ref() { color("#35e0d0") translate(bc) sphere(d = bola); color("#e6e6e6") translate(bc) bolitas() translate([0, 0, bola/2 + bol_d/2]) sphere(d = bol_d); }
@@ -160,4 +196,4 @@ if (pieza == "soporte") translate([0, 0, -sop_z[0]]) soporte();                 
 else if (pieza == "carcasa") carcasa();                                                            // tal cual, sobre su base
 else if (pieza == "tapa") translate([0, 0, -cas_z0]) tapa();
 else if (pieza == "piezas") { carcasa(); translate([45, 0, 0]) tapa(); translate([-40, 0, -sop_z[0]]) soporte(); }
-else { color("#f0761f") soporte(); color("#3a404b") carcasa(); color("#262a31") tapa(); bola_ref(); pcb_ref(); pulsadores_ref(); }
+else { color("#f0761f") soporte(); color("#3a404b") carcasa(); color("#262a31") tapa(); bola_ref(); pcb_ref(); if (clic == "mx") mx_ref(); else pulsadores_ref(); }
