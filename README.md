@@ -39,6 +39,41 @@ Ninguna necesita soportes. Están pensadas para una Bambu Lab P1S y PETG.
 
 La cabeza mide 127,9 × 101,4 mm y 66,7 mm de fondo con la caja de metacrilato puesta.
 
+## Trackball central (en diseño)
+
+Un módulo con bola de 25 mm y sensor PMW3360 que se atornilla a las dos roscas M3 que la garra de la espina ya
+tiene en la cara que mira a las palmas. La bola queda entre las dos palancas de pulgar, con la parte de arriba a
+39,5 mm de la mesa.
+
+![Trackball central](img/trackball.png)
+
+| Archivo | Qué es | Peso (PETG, macizo) | Cómo se imprime |
+|---|---|---|---|
+| `trackball/soporte.stl` | Cuña que se atornilla a la garra y acaba en un raíl de cola de milano | 2 g | De pie sobre su base |
+| `trackball/carcasa.stl` | Aloja la bola, tres bolitas de apoyo, la placa del sensor y los dos switches MX de los clics; baja deslizando por el raíl | 38 g | Sobre su base |
+| `trackball/tapa.stl` | Cierra por debajo la cámara del sensor | 1 g | Plana |
+
+Montaje: primero el soporte, con 2 × M3×8 Allen (no más largos: la punta queda enrasada con la cara de la garra que
+toca el teclado). Luego la placa del sensor y la tapa (2 × M2×6 que roscan en el plástico), las tres bolitas de 5 mm
+(cerámica o acero) y la bola. La carcasa baja por el raíl desde arriba.
+
+Los clics son dos switches MX (izquierdo y derecho) en la cara delantera, inclinados 40° hacia arriba, con su
+keycap; se pulsan bajando el pulgar desde la bola. Se sujetan a presión en una placa de 1,5 mm, como en un teclado.
+Sus patas y el cable del sensor salen juntos por debajo del frente. El módulo no depende del teclado: todo va por un
+cable de 8 hilos a una Raspberry Pi Pico con QMK, que se presenta a la Orange Pi como un ratón USB normal. Con
+`clic = "6x6"` la carcasa lleva en su lugar dos pulsadores 6 × 6 en los flancos y queda más corta.
+
+Sin comprobar todavía:
+
+- Las medidas de la placa del sensor y de la lente (`nav_pcb`, `pcb`, `chip_h`, `lente` al principio de
+  `trackball/trackball.scad`) son supuestas: hay que corregirlas con la placa que se compre.
+- La holgura con las mitades del teclado sale del volumen de referencia (`ref_forge.scad`), que en el centro se
+  tomó en parte de fotos: unos 0,6 mm en el peor punto, abajo y detrás.
+- Con los switches MX el módulo sale unos 19 mm por delante del borde de las palmas, y los keycaps hasta unos 32 mm.
+
+Para regenerar: `openscad -o trackball/carcasa.stl --export-format binstl -D 'pieza="carcasa"' trackball/trackball.scad`
+(también `soporte` y `tapa`; `pieza="conjunto"` lo muestra montado).
+
 ## Tornillería
 
 | Unión | Tornillo |
